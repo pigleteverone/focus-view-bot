@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+
+{% block title %}Mining - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-mountain me-2"></i>{{ mine.name }}</h5>
+                {% if mine.prestige_level > 0 %}
+                <span class="badge bg-warning">Prestige Level {{ mine.prestige_level }}</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-3 bg-dark border border-secondary">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0"><i class="fas fa-wrench me-2"></i>Equipment</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
+                                        <span><i class="fas fa-hammer me-2"></i>Diggers</span>
+                                        <span class="badge bg-primary">{{ mine.diggers }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
+                                        <span><i class="fas fa-cogs me-2"></i>Processors</span>
+                                        <span class="badge bg-info">{{ mine.processors }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
+                                        <span><i class="fas fa-truck-loading me-2"></i>Excavators</span>
+                                        <span class="badge bg-success">{{ mine.excavators }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
+                                        <span><i class="fas fa-project-diagram me-2"></i>Drills</span>
+                                        <span class="badge bg-danger">{{ mine.drills }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card mb-3 bg-dark border border-secondary">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Efficiency</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
+                                        <span><i class="fas fa-hammer me-2"></i>Dig Efficiency</span>
+                                        <span class="badge bg-primary">{{ mine.dig_efficiency }}x</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
+                                        <span><i class="fas fa-cogs me-2"></i>Processing Efficiency</span>
+                                        <span class="badge bg-info">{{ mine.processing_efficiency }}x</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card mb-3 bg-dark border border-secondary">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0"><i class="fas fa-cubes me-2"></i>Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('mining.dig') }}" class="btn btn-primary {{ 'disabled' if not dig_available else '' }}" id="dig-btn">
+                                        <i class="fas fa-hammer me-1"></i> Dig
+                                    </a>
+                                    {% if not dig_available and dig_cooldown %}
+                                    <div class="text-center text-muted small mt-1 mb-2">
+                                        <span class="cooldown-timer" data-target="{{ (mine.last_dig + timedelta(minutes=1)).isoformat() }}" data-btn-id="dig-btn">
+                                            Cooldown: {{ dig_cooldown.seconds }}s
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <a href="{{ url_for('mining.process') }}" class="btn btn-info {{ 'disabled' if mine.unprocessed_material == 0 else '' }}">
+                                        <i class="fas fa-cogs me-1"></i> Process ({{ mine.unprocessed_material }})
+                                    </a>
+                                    
+                                    <a href="{{ url_for('mining.inventory') }}" class="btn btn-success">
+                                        <i class="fas fa-box-open me-1"></i> Inventory
+                                    </a>
+                                    
+                                    <a href="{{ url_for('mining.craft') }}" class="btn btn-warning">
+                                        <i class="fas fa-tools me-1"></i> Craft
+                                    </a>
+                                    
+                                    <a href="{{ url_for('mining.mine_shop') }}" class="btn btn-danger">
+                                        <i class="fas fa-store me-1"></i> Shop
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card bg-dark border border-secondary">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0"><i class="fas fa-gem me-2"></i>Current Resources</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="resource-icon bg-secondary text-white me-2">
+                                                <i class="fas fa-cubes"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white">Coal</h6>
+                                                <p class="mb-0 text-muted">{{ mine.coal }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="resource-icon bg-secondary text-white me-2">
+                                                <i class="fas fa-cog"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white">Iron</h6>
+                                                <p class="mb-0 text-muted">{{ mine.iron }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="resource-icon bg-warning text-dark me-2">
+                                                <i class="fas fa-coins"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white">Gold</h6>
+                                                <p class="mb-0 text-muted">{{ mine.gold }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="resource-icon bg-info text-white me-2">
+                                                <i class="fas fa-gem"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white">Diamond</h6>
+                                                <p class="mb-0 text-muted">{{ mine.diamond }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="resource-icon bg-success text-white me-2">
+                                                <i class="fas fa-gem"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white">Emerald</h6>
+                                                <p class="mb-0 text-muted">{{ mine.emerald }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="resource-icon bg-primary text-white me-2">
+                                                <i class="fas fa-cubes"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white">Lapis</h6>
+                                                <p class="mb-0 text-muted">{{ mine.lapis }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="resource-icon bg-danger text-white me-2">
+                                                <i class="fas fa-square"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white">Redstone</h6>
+                                                <p class="mb-0 text-muted">{{ mine.redstone }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="resource-icon bg-dark text-white me-2">
+                                                <i class="fas fa-question"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white">Unprocessed</h6>
+                                                <p class="mb-0 text-muted">{{ mine.unprocessed_material }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Miners</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Mine Name</th>
+                                <th>Owner</th>
+                                <th>Prestige Level</th>
+                                <th>Diamonds</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for miner in top_miners %}
+                            <tr class="{{ 'table-primary' if miner.user_id == current_user.id else '' }}">
+                                <td>{{ loop.index }}</td>
+                                <td>{{ miner.name }}</td>
+                                <td>{{ miner.user.username }}</td>
+                                <td>{{ miner.prestige_level }}</td>
+                                <td>{{ miner.diamond }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">No miners yet!</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .resource-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle cooldown timers
+        const cooldownTimers = document.querySelectorAll('.cooldown-timer');
+        
+        function updateCooldowns() {
+            cooldownTimers.forEach(timer => {
+                const targetTime = new Date(timer.dataset.target);
+                const now = new Date();
+                const diff = targetTime - now;
+                
+                if (diff <= 0) {
+                    // Enable the button if time has passed
+                    const btnId = timer.dataset.btnId;
+                    const btn = document.getElementById(btnId);
+                    if (btn) {
+                        btn.classList.remove('disabled');
+                        btn.textContent = 'Dig';
+                    }
+                    
+                    timer.parentElement.innerHTML = '<span class="text-success">Available now!</span>';
+                    return;
+                }
+                
+                // Calculate time remaining
+                let timeString = '';
+                const minutes = Math.floor(diff / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                if (minutes > 0) timeString += `${minutes}m `;
+                timeString += `${seconds}s`;
+                
+                timer.textContent = `Cooldown: ${timeString}`;
+            });
+        }
+        
+        // Update immediately and then every second
+        updateCooldowns();
+        setInterval(updateCooldowns, 1000);
+    });
+</script>
+{% endblock %}

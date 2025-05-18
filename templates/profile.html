@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ current_user.username }}'s Profile - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="avatar-container bg-secondary rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px;">
+                            <i class="fas fa-user-circle fa-4x text-white"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <h2 class="text-white mb-1">{{ current_user.username }}</h2>
+                        <p class="text-muted">Member since {{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+                        <div class="d-flex flex-wrap gap-3 mt-3">
+                            <div class="badge bg-warning text-dark px-3 py-2">
+                                <i class="fas fa-coins me-1"></i> Cash: <span class="currency-value">{{ current_user.cash }}</span>
+                            </div>
+                            <div class="badge bg-info px-3 py-2">
+                                <i class="fas fa-star me-1"></i> Level: {{ current_user.level }}
+                            </div>
+                            <div class="badge bg-secondary px-3 py-2">
+                                <i class="fas fa-trophy me-1"></i> XP: {{ current_user.xp }} / {{ (current_user.level + 1) * 1000 }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('main.daily') }}" class="btn btn-warning {{ 'disabled' if not daily_available else '' }}" id="daily-btn">
+                                <i class="fas fa-gift me-1"></i> Claim Daily
+                            </a>
+                            <a href="{{ url_for('main.work') }}" class="btn btn-info {{ 'disabled' if not work_available else '' }}" id="work-btn">
+                                <i class="fas fa-briefcase me-1"></i> Work (10m)
+                            </a>
+                            <a href="{{ url_for('main.overtime') }}" class="btn btn-secondary {{ 'disabled' if not overtime_available else '' }}" id="overtime-btn">
+                                <i class="fas fa-business-time me-1"></i> Overtime (3h)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Time-Based Rewards</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark border border-secondary mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h5 class="text-warning"><i class="fas fa-gift me-2"></i>Daily Reward</h5>
+                                        <p class="text-muted small mb-0">Claim once every day</p>
+                                    </div>
+                                    <a href="{{ url_for('main.daily') }}" class="btn btn-warning btn-sm {{ 'disabled' if not daily_available else '' }}" id="daily-btn">
+                                        {% if daily_available %}Claim Now{% else %}On Cooldown{% endif %}
+                                    </a>
+                                </div>
+                                {% if not daily_available and current_user.last_daily %}
+                                <div class="text-muted small">
+                                    <i class="fas fa-clock me-1"></i> Available in: 
+                                    <span class="cooldown-timer text-danger" data-target="{{ current_user.last_daily.replace(hour=0, minute=0, second=0) + timedelta(days=1) }}" data-btn-id="daily-btn"></span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-dark border border-secondary mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h5 class="text-info"><i class="fas fa-briefcase me-2"></i>Work</h5>
+                                        <p class="text-muted small mb-0">Work every 10 minutes</p>
+                                    </div>
+                                    <a href="{{ url_for('main.work') }}" class="btn btn-info btn-sm {{ 'disabled' if not work_available else '' }}" id="work-btn">
+                                        {% if work_available %}Work Now{% else %}On Cooldown{% endif %}
+                                    </a>
+                                </div>
+                                {% if not work_available and current_user.last_work %}
+                                <div class="text-muted small">
+                                    <i class="fas fa-clock me-1"></i> Available in: 
+                                    <span class="cooldown-timer text-danger" data-target="{{ current_user.last_work + timedelta(minutes=10) }}" data-btn-id="work-btn"></span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-dark border border-secondary mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h5 class="text-secondary"><i class="fas fa-business-time me-2"></i>Overtime</h5>
+                                        <p class="text-muted small mb-0">Work extra every 3 hours</p>
+                                    </div>
+                                    <a href="{{ url_for('main.overtime') }}" class="btn btn-secondary btn-sm {{ 'disabled' if not overtime_available else '' }}" id="overtime-btn">
+                                        {% if overtime_available %}Work Overtime{% else %}On Cooldown{% endif %}
+                                    </a>
+                                </div>
+                                {% if not overtime_available and current_user.last_overtime %}
+                                <div class="text-muted small">
+                                    <i class="fas fa-clock me-1"></i> Available in: 
+                                    <span class="cooldown-timer text-danger" data-target="{{ current_user.last_overtime + timedelta(hours=3) }}" data-btn-id="overtime-btn"></span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark border border-secondary mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h5 class="text-primary"><i class="fas fa-calendar-week me-2"></i>Weekly Reward</h5>
+                                        <p class="text-muted small mb-0">Claim once every 7 days</p>
+                                    </div>
+                                    <a href="{{ url_for('main.weekly') }}" class="btn btn-primary btn-sm {{ 'disabled' if not weekly_available else '' }}" id="weekly-btn">
+                                        {% if weekly_available %}Claim Now{% else %}On Cooldown{% endif %}
+                                    </a>
+                                </div>
+                                {% if not weekly_available and current_user.last_weekly %}
+                                <div class="text-muted small">
+                                    <i class="fas fa-clock me-1"></i> Available in: 
+                                    <span class="cooldown-timer text-danger" data-target="{{ current_user.last_weekly + timedelta(days=7) }}" data-btn-id="weekly-btn"></span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-dark border border-secondary mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h5 class="text-success"><i class="fas fa-calendar-alt me-2"></i>Monthly Reward</h5>
+                                        <p class="text-muted small mb-0">Claim once every 30 days</p>
+                                    </div>
+                                    <a href="{{ url_for('main.monthly') }}" class="btn btn-success btn-sm {{ 'disabled' if not monthly_available else '' }}" id="monthly-btn">
+                                        {% if monthly_available %}Claim Now{% else %}On Cooldown{% endif %}
+                                    </a>
+                                </div>
+                                {% if not monthly_available and current_user.last_monthly %}
+                                <div class="text-muted small">
+                                    <i class="fas fa-clock me-1"></i> Available in: 
+                                    <span class="cooldown-timer text-danger" data-target="{{ current_user.last_monthly + timedelta(days=30) }}" data-btn-id="monthly-btn"></span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-dark border border-secondary mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h5 class="text-danger"><i class="fas fa-calendar me-2"></i>Yearly Jackpot</h5>
+                                        <p class="text-muted small mb-0">Claim once every 365 days</p>
+                                    </div>
+                                    <a href="{{ url_for('main.yearly') }}" class="btn btn-danger btn-sm {{ 'disabled' if not yearly_available else '' }}" id="yearly-btn">
+                                        {% if yearly_available %}Claim Now{% else %}On Cooldown{% endif %}
+                                    </a>
+                                </div>
+                                {% if not yearly_available and current_user.last_yearly %}
+                                <div class="text-muted small">
+                                    <i class="fas fa-clock me-1"></i> Available in: 
+                                    <span class="cooldown-timer text-danger" data-target="{{ current_user.last_yearly + timedelta(days=365) }}" data-btn-id="yearly-btn"></span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Player Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Total Games</h6>
+                            <div class="stat-value">{{ total_games }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Wins</h6>
+                            <div class="stat-value text-success">{{ wins }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Losses</h6>
+                            <div class="stat-value text-danger">{{ losses }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Win Rate</h6>
+                            <div class="stat-value text-warning">{{ win_rate|round(1) }}%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="text-white">XP Progress</h6>
+                    <div class="progress" style="height: 20px;">
+                        {% set xp_percent = (current_user.xp / ((current_user.level + 1) * 1000)) * 100 %}
+                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ xp_percent }}%;" 
+                             aria-valuenow="{{ current_user.xp }}" aria-valuemin="0" aria-valuemax="{{ (current_user.level + 1) * 1000 }}">
+                            {{ current_user.xp }} / {{ (current_user.level + 1) * 1000 }}
+                        </div>
+                    </div>
+                    <div class="text-muted mt-2 small">
+                        <i class="fas fa-info-circle me-1"></i> Gain XP by winning games and completing achievements
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Game History</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Game</th>
+                                <th>Bet</th>
+                                <th>Result</th>
+                                <th>Winnings</th>
+                                <th>Date/Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for game in game_history %}
+                            <tr>
+                                <td>{{ game.game_type|capitalize }}</td>
+                                <td>{{ game.bet_amount }}</td>
+                                <td>
+                                    {% if game.outcome == 'win' %}
+                                    <span class="badge bg-success">Win</span>
+                                    {% elif game.outcome == 'loss' %}
+                                    <span class="badge bg-danger">Loss</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">{{ game.outcome|capitalize }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if game.winnings > 0 %}
+                                    <span class="text-success">+{{ game.winnings }}</span>
+                                    {% elif game.winnings < 0 %}
+                                    <span class="text-danger">{{ game.winnings }}</span>
+                                    {% else %}
+                                    <span class="text-muted">0</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ game.played_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">No game history yet. Start playing!</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Update XP progress bar with animation
+        const xpProgress = document.querySelector('.progress-bar');
+        const currentXP = {{ current_user.xp }};
+        const xpNeeded = {{ (current_user.level + 1) * 1000 }};
+        const percentage = (currentXP / xpNeeded) * 100;
+        
+        // Start from 0 and animate to actual percentage
+        xpProgress.style.width = '0%';
+        setTimeout(() => {
+            xpProgress.style.transition = 'width 1s ease-in-out';
+            xpProgress.style.width = percentage + '%';
+        }, 200);
+        
+        // Handle cooldown timers
+        const cooldownTimers = document.querySelectorAll('.cooldown-timer');
+        
+        function updateCooldowns() {
+            cooldownTimers.forEach(timer => {
+                const targetTime = new Date(timer.dataset.target);
+                const now = new Date();
+                const diff = targetTime - now;
+                
+                if (diff <= 0) {
+                    // Enable the button if time has passed
+                    const btnId = timer.dataset.btnId;
+                    const btn = document.getElementById(btnId);
+                    if (btn) {
+                        btn.classList.remove('disabled');
+                        btn.textContent = btnId.includes('work') ? 'Work Now' : 
+                                         btnId.includes('overtime') ? 'Work Overtime' : 'Claim Now';
+                    }
+                    
+                    timer.parentElement.innerHTML = '<span class="text-success">Available now!</span>';
+                    return;
+                }
+                
+                // Calculate time remaining
+                let timeString = '';
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                if (days > 0) timeString += `${days}d `;
+                if (hours > 0 || days > 0) timeString += `${hours}h `;
+                if (minutes > 0 || hours > 0 || days > 0) timeString += `${minutes}m `;
+                timeString += `${seconds}s`;
+                
+                timer.textContent = timeString;
+            });
+        }
+        
+        // Update immediately and then every second
+        updateCooldowns();
+        setInterval(updateCooldowns, 1000);
+        
+        // Format currency values
+        const currencyValues = document.querySelectorAll('.currency-value');
+        currencyValues.forEach(value => {
+            const num = parseInt(value.textContent);
+            value.textContent = num.toLocaleString();
+        });
+    });
+</script>
+{% endblock %}

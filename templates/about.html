@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-8 offset-md-2">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-info-circle text-info me-2"></i>About Gambling Game Bot</h4>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center mb-5">
+                    <div class="col-md-4 text-center">
+                        <img src="{{ url_for('static', filename='svg/logo.svg') }}" alt="Gambling Game Bot Logo" class="img-fluid mb-3" style="max-width: 200px;">
+                    </div>
+                    <div class="col-md-8">
+                        <h5 class="text-white">Virtual Gambling Platform</h5>
+                        <p class="text-light">Gambling Game Bot is a virtual gambling platform where you can play various games of chance using virtual currency. The platform offers a risk-free way to enjoy the thrill of gambling without using real money.</p>
+                        <p class="text-light">Our goal is to provide entertainment and a competitive environment where players can test their luck and strategy against others.</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-5">
+                    <div class="col-md-12">
+                        <h5 class="text-white mb-3">Our Features</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-gamepad text-warning fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-white">Multiple Games</h6>
+                                        <p class="text-muted mb-0">Play a variety of casino-style games including Coin Flip, Blackjack, and Slots.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-coins text-warning fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-white">Virtual Currency</h6>
+                                        <p class="text-muted mb-0">Earn and spend virtual coins with no real-world value or risk.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-trophy text-warning fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-white">Leaderboards</h6>
+                                        <p class="text-muted mb-0">Compete with other players to climb various leaderboards and show off your skills.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-chart-line text-warning fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-white">Progress System</h6>
+                                        <p class="text-muted mb-0">Level up by winning games and unlock increased daily rewards.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-5">
+                    <div class="col-md-12">
+                        <h5 class="text-white mb-3">Important Notes</h5>
+                        <div class="alert alert-info">
+                            <h6 class="text-white"><i class="fas fa-exclamation-circle me-2"></i>Virtual Currency Only</h6>
+                            <p class="mb-0">All currency in Gambling Game Bot is virtual and has no real-world value. There is no way to deposit, withdraw, or exchange the virtual coins for real money or cryptocurrency.</p>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <h6 class="text-white"><i class="fas fa-shield-alt me-2"></i>Responsible Gaming</h6>
+                            <p class="mb-0">While our platform uses only virtual currency, we still encourage responsible gaming habits. Take breaks, set limits on your playing time, and remember that games of chance are meant to be fun entertainment.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h5 class="text-white mb-4">Gaming Interface</h5>
+                        <img src="https://pixabay.com/get/g434a98ac8148ed3ee9fdc273f1467baf5c8d1dc2c920ae0fd23a39f7294ee1152bf062a5d8db712912afb7d8bdcb6ec011b145ec08f19b35327a0f08a32573ed_1280.jpg" alt="Gaming Interface" class="img-fluid rounded mb-4" style="max-height: 300px;">
+                        <p class="text-muted">Our platform is designed to be easy to use, visually appealing, and mobile-friendly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-code text-info me-2"></i>Technical Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5 class="text-white mb-3">Technology Stack</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fab fa-python text-info fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-white">Backend</h6>
+                                        <p class="text-muted mb-0">Built with Flask (Python) for robust server-side logic and game processing.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fab fa-bootstrap text-info fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-white">Frontend</h6>
+                                        <p class="text-muted mb-0">Modern interface built with HTML5, CSS3, and Bootstrap 5 for responsive design.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fab fa-js text-info fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-white">Interactions</h6>
+                                        <p class="text-muted mb-0">Vanilla JavaScript for smooth, interactive gameplay without dependencies.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-database text-info fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-white">Data Storage</h6>
+                                        <p class="text-muted mb-0">SQLite database (SQLAlchemy) for user profiles, game history, and leaderboards.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3 text-center">
+        <div class="card bg-dark border border-info">
+            <div class="card-body py-4">
+                <h5 class="text-white mb-3">Ready to Try Your Luck?</h5>
+                <p class="text-muted mb-4">Join now and get 1,000 free coins to start your gambling adventure!</p>
+                
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('games.coinflip') }}" class="btn btn-info btn-lg">
+                    <i class="fas fa-dice me-2"></i> Play Games Now
+                </a>
+                {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-info btn-lg">
+                    <i class="fas fa-user-plus me-2"></i> Register & Play
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

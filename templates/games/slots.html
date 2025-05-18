@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block title %}Slots - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-info">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-slot-machine text-info me-2"></i>Slots</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 order-md-2">
+                        <div class="slot-machine mb-4">
+                            <div class="text-center mb-3">
+                                <h5 class="text-white">Spin to Win!</h5>
+                            </div>
+                            
+                            <div id="slots-container" class="slots-container py-3">
+                                {% if results %}
+                                    <div id="slot1" class="slot d-flex align-items-center justify-content-center">
+                                        <img src="{{ url_for('static', filename='images/slots/' + results[0] + '.svg') }}" alt="{{ results[0] }}" width="60" height="60">
+                                    </div>
+                                    <div id="slot2" class="slot d-flex align-items-center justify-content-center">
+                                        <img src="{{ url_for('static', filename='images/slots/' + results[1] + '.svg') }}" alt="{{ results[1] }}" width="60" height="60">
+                                    </div>
+                                    <div id="slot3" class="slot d-flex align-items-center justify-content-center">
+                                        <img src="{{ url_for('static', filename='images/slots/' + results[2] + '.svg') }}" alt="{{ results[2] }}" width="60" height="60">
+                                    </div>
+                                {% else %}
+                                    <div id="slot1" class="slot d-flex align-items-center justify-content-center">?</div>
+                                    <div id="slot2" class="slot d-flex align-items-center justify-content-center">?</div>
+                                    <div id="slot3" class="slot d-flex align-items-center justify-content-center">?</div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if outcome %}
+                                <div class="text-center mt-3">
+                                    {% if outcome == 'win' %}
+                                        <div class="alert alert-success">
+                                            <i class="fas fa-check-circle me-2"></i> You won {{ winnings }} coins!
+                                        </div>
+                                    {% else %}
+                                        <div class="alert alert-danger">
+                                            <i class="fas fa-times-circle me-2"></i> You lost {{ bet_amount }} coins.
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <form id="slots-form" method="post" action="{{ url_for('games.slots') }}">
+                            <div class="mb-3">
+                                <label for="bet_amount" class="form-label text-white">Bet Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-coins text-warning"></i></span>
+                                    <input type="number" class="form-control bet-input" id="bet_amount" name="bet_amount" placeholder="Enter bet amount" min="1" max="{{ current_user.cash }}" required>
+                                    <button type="button" class="btn btn-outline-warning max-bet-btn" data-target="#bet_amount" data-max="{{ current_user.cash }}">Max</button>
+                                </div>
+                                <div class="form-text text-light">Current balance: <span class="currency-value">{{ current_user.cash }}</span> coins</div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-info btn-lg">
+                                    <i class="fas fa-sync-alt me-2"></i> Spin
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="col-md-6 order-md-1">
+                        <div class="game-instructions mb-4">
+                            <h5 class="text-white mb-3">How to Play</h5>
+                            <ul class="text-light">
+                                <li>Place your bet amount</li>
+                                <li>Spin the slots and hope for matching symbols!</li>
+                                <li>Two matching symbols wins 1x your bet</li>
+                                <li>Three matching symbols wins big - up to 20x your bet!</li>
+                                <li>Different symbol combinations have different payouts</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card bg-dark border border-secondary mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0">Paytable</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Symbol</th>
+                                                <th>3 Matches</th>
+                                                <th>2 Matches</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="fs-4">7️⃣</td>
+                                                <td class="text-success">20x bet</td>
+                                                <td class="text-success">1x bet</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fs-4">💰</td>
+                                                <td class="text-success">15x bet</td>
+                                                <td class="text-success">1x bet</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fs-4">🔔</td>
+                                                <td class="text-success">10x bet</td>
+                                                <td class="text-success">1x bet</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fs-4">🍇</td>
+                                                <td class="text-success">8x bet</td>
+                                                <td class="text-success">1x bet</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fs-4">🍋/🍊/🍒</td>
+                                                <td class="text-success">5x bet</td>
+                                                <td class="text-success">1x bet</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Your Slots History</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Bet</th>
+                                <th>Outcome</th>
+                                <th>Winnings</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for game in current_user.games|selectattr('game_type', 'equalto', 'slots')|list|sort(attribute='played_at', reverse=true)|slice(0, 10) %}
+                            <tr>
+                                <td>{{ game.bet_amount }}</td>
+                                <td>
+                                    {% if game.outcome == 'win' %}
+                                    <span class="badge bg-success">Win</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Loss</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if game.winnings > 0 %}
+                                    <span class="text-success">+{{ game.winnings }}</span>
+                                    {% else %}
+                                    <span class="text-danger">-{{ game.bet_amount }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ game.played_at.strftime('%H:%M:%S') }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">No slots history yet. Start playing!</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Slots Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Games Played</h6>
+                            <div class="stat-value text-info">
+                                {{ current_user.games|selectattr('game_type', 'equalto', 'slots')|list|length }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Win Rate</h6>
+                            <div class="stat-value text-success">
+                                {% set slots_games = current_user.games|selectattr('game_type', 'equalto', 'slots')|list %}
+                                {% set slots_wins = current_user.games|selectattr('game_type', 'equalto', 'slots')|selectattr('outcome', 'equalto', 'win')|list %}
+                                {% if slots_games|length > 0 %}
+                                    {{ ((slots_wins|length / slots_games|length) * 100)|round(1) }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Jackpot Hits</h6>
+                            <div class="stat-value text-warning">
+                                {% set jackpots = current_user.games|selectattr('game_type', 'equalto', 'slots')|selectattr('winnings', '>', current_user.games|selectattr('game_type', 'equalto', 'slots')|map(attribute='bet_amount')|max(default=0) * 10)|list|length %}
+                                {{ jackpots }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Total Profit</h6>
+                            <div class="stat-value {{ 'text-success' if current_user.games|selectattr('game_type', 'equalto', 'slots')|map(attribute='winnings')|sum > 0 else 'text-danger' }}">
+                                {{ current_user.games|selectattr('game_type', 'equalto', 'slots')|map(attribute='winnings')|sum }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="text-light">Want to try another game?</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{{ url_for('games.coinflip') }}" class="btn btn-warning">
+                            <i class="fas fa-play-circle me-1"></i> Play Coin Flip
+                        </a>
+                        <a href="{{ url_for('games.blackjack') }}" class="btn btn-danger">
+                            <i class="fas fa-play-circle me-1"></i> Play Blackjack
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/games.js') }}"></script>
+{% endblock %}

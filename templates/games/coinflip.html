@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block title %}Coin Flip - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-warning">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-coins text-warning me-2"></i>Coin Flip</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="game-instructions mb-4">
+                            <h5 class="text-white mb-3">How to Play</h5>
+                            <ul class="text-light">
+                                <li>Choose either heads or tails</li>
+                                <li>Place your bet amount</li>
+                                <li>If you guess correctly, you win 2x your bet!</li>
+                                <li>If you're wrong, you lose your bet</li>
+                            </ul>
+                            <div class="alert alert-warning mt-3">
+                                <i class="fas fa-info-circle me-2"></i> The house edge is 0%. This means your odds of winning are exactly 50/50!
+                            </div>
+                        </div>
+                        
+                        <form id="coinflip-form" method="post" action="{{ url_for('games.coinflip') }}">
+                            <div class="mb-4">
+                                <label class="form-label text-white">Choose Your Side</label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="choice" id="heads" value="heads" checked>
+                                        <label class="form-check-label text-white" for="heads">
+                                            <i class="fas fa-circle text-warning me-1"></i> Heads
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="choice" id="tails" value="tails">
+                                        <label class="form-check-label text-white" for="tails">
+                                            <i class="fas fa-adjust text-warning me-1"></i> Tails
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="bet_amount" class="form-label text-white">Bet Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-coins text-warning"></i></span>
+                                    <input type="number" class="form-control bet-input" id="bet_amount" name="bet_amount" placeholder="Enter bet amount" min="1" max="{{ current_user.cash }}" required>
+                                    <button type="button" class="btn btn-outline-warning max-bet-btn" data-target="#bet_amount" data-max="{{ current_user.cash }}">Max</button>
+                                </div>
+                                <div class="form-text text-light">Current balance: <span class="currency-value">{{ current_user.cash }}</span> coins</div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-warning btn-lg">
+                                    <i class="fas fa-coins me-2"></i> Flip Coin
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="col-md-6 d-flex flex-column align-items-center justify-content-center">
+                        <div id="coin" class="coin mb-4">
+                            <img src="{{ url_for('static', filename='svg/coin.svg') }}" alt="Coin" width="150" height="150">
+                        </div>
+                        <div id="result" class="text-center text-white fs-4 mb-3">
+                            {% if request.method == 'POST' %}
+                                {% if 'win' in get_flashed_messages(category_filter=['success'])|join('') %}
+                                    <span class="badge bg-success p-2">You Won!</span>
+                                {% elif 'lost' in get_flashed_messages(category_filter=['danger'])|join('') %}
+                                    <span class="badge bg-danger p-2">You Lost</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted">Make a bet to flip the coin</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Your Coin Flip History</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Bet</th>
+                                <th>Choice</th>
+                                <th>Result</th>
+                                <th>Outcome</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for game in current_user.games %}
+                                {% if game.game_type == 'coinflip' %}
+                                <tr>
+                                    <td>{{ game.bet_amount }}</td>
+                                    <td>{{ game.outcome.split('_')[1] if '_' in game.outcome else 'N/A' }}</td>
+                                    <td>{{ game.outcome.split('_')[0] if '_' in game.outcome else 'N/A' }}</td>
+                                    <td>
+                                        {% if game.winnings > 0 %}
+                                        <span class="badge bg-success">+{{ game.winnings }}</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">-{{ game.bet_amount }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No coin flips yet. Start playing!</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Coin Flip Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Heads Rate</h6>
+                            <div class="stat-value text-warning">
+                                {% set heads_games = current_user.games|selectattr('game_type', 'equalto', 'coinflip')|selectattr('outcome', 'contains', 'heads')|list %}
+                                {% set total_games = current_user.games|selectattr('game_type', 'equalto', 'coinflip')|list %}
+                                {% if total_games|length > 0 %}
+                                    {{ ((heads_games|length / total_games|length) * 100)|round(1) }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Tails Rate</h6>
+                            <div class="stat-value text-warning">
+                                {% set tails_games = current_user.games|selectattr('game_type', 'equalto', 'coinflip')|selectattr('outcome', 'contains', 'tails')|list %}
+                                {% if total_games|length > 0 %}
+                                    {{ ((tails_games|length / total_games|length) * 100)|round(1) }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="text-light">Want to try another game?</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{{ url_for('games.blackjack') }}" class="btn btn-danger">
+                            <i class="fas fa-play-circle me-1"></i> Play Blackjack
+                        </a>
+                        <a href="{{ url_for('games.slots') }}" class="btn btn-info">
+                            <i class="fas fa-play-circle me-1"></i> Play Slots
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/games.js') }}"></script>
+{% endblock %}

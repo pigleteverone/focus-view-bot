@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <!-- Background -->
+  <rect x="0" y="0" width="200" height="60" rx="10" ry="10" fill="#2d3436" />
+  
+  <!-- Logo text -->
+  <text x="65" y="30" font-family="Arial" font-size="22" font-weight="bold" fill="#fff" text-anchor="start" alignment-baseline="middle">Gambling</text>
+  <text x="65" y="48" font-family="Arial" font-size="18" fill="#e84393" text-anchor="start" alignment-baseline="middle">Game Bot</text>
+  
+  <!-- Dice icon -->
+  <rect x="15" y="10" width="40" height="40" rx="5" ry="5" fill="#6c5ce7" stroke="#fff" stroke-width="2" />
+  
+  <!-- Dice dots -->
+  <circle cx="25" cy="20" r="4" fill="#fff" />
+  <circle cx="45" cy="20" r="4" fill="#fff" />
+  <circle cx="35" cy="30" r="4" fill="#fff" />
+  <circle cx="25" cy="40" r="4" fill="#fff" />
+  <circle cx="45" cy="40" r="4" fill="#fff" />
+  
+  <!-- Decoration -->
+  <path d="M190,10 L190,50" stroke="#e84393" stroke-width="3" stroke-linecap="round" />
+  <circle cx="190" cy="15" r="3" fill="#e84393" />
+  <circle cx="190" cy="45" r="3" fill="#e84393" />
+</svg>

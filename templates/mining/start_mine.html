@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Start Mining - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-mountain me-2"></i>{{ 'Update Mine Name' if existing_mine else 'Start Mining' }}</h5>
+            </div>
+            <div class="card-body">
+                {% if existing_mine %}
+                <p class="text-light">You already have a mine named <strong>{{ existing_mine.name }}</strong>. You can update the name below:</p>
+                {% else %}
+                <p class="text-light">Start your mining career! Earn resources by digging and processing materials, then craft items and upgrade your mine.</p>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> You'll start with 1 basic digger to begin your mining journey.
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('mining.start_mine') }}">
+                    <div class="mb-3">
+                        <label for="mine_name" class="form-label text-light">Mine Name</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="mine_name" name="mine_name" placeholder="{{ existing_mine.name if existing_mine else current_user.username + '\'s Mine' }}">
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-play-circle me-1"></i> {{ 'Update Mine Name' if existing_mine else 'Start Mining' }}
+                        </button>
+                        {% if existing_mine %}
+                        <a href="{{ url_for('mining.mine_info') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Mine
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

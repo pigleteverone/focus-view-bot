@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block title %}Blackjack - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-danger">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-playing-card text-danger me-2"></i>Blackjack</h4>
+            </div>
+            <div class="card-body">
+                <!-- Game Setup Form -->
+                <form id="blackjack-form" method="post" action="{{ url_for('games.blackjack') }}" class="{{ 'd-none' if bet_amount else '' }}">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="game-instructions mb-4">
+                                <h5 class="text-white mb-3">How to Play</h5>
+                                <ul class="text-light">
+                                    <li>Try to get cards totaling closer to 21 than the dealer without going over</li>
+                                    <li>Number cards are worth their face value</li>
+                                    <li>Face cards (J, Q, K) are worth 10</li>
+                                    <li>Aces are worth 11 or 1, whichever is better for your hand</li>
+                                    <li>Beat the dealer to win 1x your bet</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card bg-dark border border-secondary mb-4">
+                                <div class="card-body">
+                                    <label for="bet_amount" class="form-label text-white">Place Your Bet</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-coins text-warning"></i></span>
+                                        <input type="number" class="form-control bet-input" id="bet_amount" name="bet_amount" placeholder="Enter bet amount" min="1" max="{{ current_user.cash }}" required>
+                                        <button type="button" class="btn btn-outline-warning max-bet-btn" data-target="#bet_amount" data-max="{{ current_user.cash }}">Max</button>
+                                    </div>
+                                    <div class="form-text text-light">Current balance: <span class="currency-value">{{ current_user.cash }}</span> coins</div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-danger btn-lg">
+                                    <i class="fas fa-play-circle me-2"></i> Deal Cards
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Game Area (Hidden initially, shown after bet) -->
+                <div id="blackjack-game" class="{{ '' if bet_amount else 'd-none' }}">
+                    <div class="row mb-3">
+                        <div class="col-12 text-center">
+                            <h5 class="text-white mb-3">Dealer's Hand</h5>
+                            <div id="dealer-hand" class="d-flex justify-content-center flex-wrap"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-5 mb-4">
+                        <div class="col-12 text-center">
+                            <h5 class="text-white mb-3">Your Hand</h5>
+                            <div id="player-hand" class="d-flex justify-content-center flex-wrap"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <div id="game-message" class="alert alert-info mb-4">
+                                Your turn. Hit or Stand?
+                            </div>
+                            
+                            <div class="d-flex justify-content-center gap-3">
+                                <button id="hit-button" class="btn btn-success btn-lg px-4">
+                                    <i class="fas fa-plus-circle me-2"></i> Hit
+                                </button>
+                                <button id="stand-button" class="btn btn-warning btn-lg px-4">
+                                    <i class="fas fa-hand-paper me-2"></i> Stand
+                                </button>
+                                <button id="reset-button" class="btn btn-secondary btn-lg px-4" disabled>
+                                    <i class="fas fa-redo me-2"></i> New Game
+                                </button>
+                            </div>
+                            
+                            <div class="mt-3 text-light">
+                                <small>Current bet: <span class="text-warning">{{ bet_amount }}</span> coins</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card bg-dark border border-secondary h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Blackjack Rules</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="text-warning mb-3">Card Values</h6>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="rule-item mb-2">
+                            <span class="text-light">2-10:</span>
+                            <span class="text-muted">Face Value</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="rule-item mb-2">
+                            <span class="text-light">J, Q, K:</span>
+                            <span class="text-muted">10 points</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="rule-item mb-2">
+                            <span class="text-light">Ace:</span>
+                            <span class="text-muted">1 or 11</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="text-warning mb-3">Game Flow</h6>
+                <ol class="text-light">
+                    <li>Place your bet</li>
+                    <li>Dealer gives 2 cards to you and 2 to themselves (1 face down)</li>
+                    <li>You can "hit" (take another card) or "stand" (keep current hand)</li>
+                    <li>If you go over 21, you "bust" and lose</li>
+                    <li>If you stand, the dealer reveals their hidden card</li>
+                    <li>Dealer must hit until they have at least 17</li>
+                    <li>Closest to 21 without busting wins</li>
+                </ol>
+                
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Going over 21 means an automatic loss!
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card bg-dark border border-secondary h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Your Blackjack Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Games Played</h6>
+                            <div class="stat-value text-info">
+                                {{ current_user.games|selectattr('game_type', 'equalto', 'blackjack')|list|length }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Win Rate</h6>
+                            <div class="stat-value text-success">
+                                {% set bj_games = current_user.games|selectattr('game_type', 'equalto', 'blackjack')|list %}
+                                {% set bj_wins = current_user.games|selectattr('game_type', 'equalto', 'blackjack')|selectattr('outcome', 'equalto', 'win')|list %}
+                                {% if bj_games|length > 0 %}
+                                    {{ ((bj_wins|length / bj_games|length) * 100)|round(1) }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Biggest Win</h6>
+                            <div class="stat-value text-warning">
+                                {% set max_win = current_user.games|selectattr('game_type', 'equalto', 'blackjack')|selectattr('outcome', 'equalto', 'win')|map(attribute='winnings')|list|max(default=0) %}
+                                {{ max_win }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-card">
+                            <h6 class="text-muted">Total Profit</h6>
+                            <div class="stat-value {{ 'text-success' if current_user.games|selectattr('game_type', 'equalto', 'blackjack')|map(attribute='winnings')|sum > 0 else 'text-danger' }}">
+                                {{ current_user.games|selectattr('game_type', 'equalto', 'blackjack')|map(attribute='winnings')|sum }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="text-light">Want to try another game?</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{{ url_for('games.coinflip') }}" class="btn btn-warning">
+                            <i class="fas fa-play-circle me-1"></i> Play Coin Flip
+                        </a>
+                        <a href="{{ url_for('games.slots') }}" class="btn btn-info">
+                            <i class="fas fa-play-circle me-1"></i> Play Slots
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/games.js') }}"></script>
+{% endblock %}

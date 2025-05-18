@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}Gambling Game Bot - Home{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-6">
+        <div class="hero-section p-4 rounded bg-dark border border-secondary mb-4">
+            <h1 class="display-5 fw-bold text-white">Welcome to the Gambling Game Bot</h1>
+            <p class="lead text-light">Play games, win coins, climb the leaderboards!</p>
+            <p class="text-light">Start with 1,000 coins and compete with other players to become the wealthiest gambler.</p>
+            {% if not current_user.is_authenticated %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 me-md-2">Register Now</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">Login</a>
+            </div>
+            {% else %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{{ url_for('games.coinflip') }}" class="btn btn-warning btn-lg px-4 me-md-2">Play Now</a>
+                <a href="{{ url_for('main.profile') }}" class="btn btn-outline-info btn-lg px-4">My Profile</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-dark border border-secondary h-100">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <img src="https://pixabay.com/get/g739589bc75acc693ec060f878c580ae4301f9ae411bb0b06d626f7c8c935b31db9c6817fdc35fec521a480361d8e4043a612f6fe5736346e23f86174c71274b0_1280.jpg" alt="Digital Currency" class="img-fluid rounded" style="max-height: 300px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <h2 class="text-center text-white">Popular Games</h2>
+        <hr class="border-secondary">
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card game-card bg-dark border border-warning h-100">
+            <div class="card-body text-center">
+                <div class="game-icon">
+                    <img src="{{ url_for('static', filename='svg/coin.svg') }}" alt="Coin Flip" width="80">
+                </div>
+                <h5 class="card-title">Coin Flip</h5>
+                <p class="card-text">Bet on heads or tails. Win double your bet if you guess correctly!</p>
+                <a href="{{ url_for('games.coinflip') }}" class="btn btn-warning">Play Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card game-card bg-dark border border-danger h-100">
+            <div class="card-body text-center">
+                <div class="game-icon">
+                    <img src="{{ url_for('static', filename='svg/cards.svg') }}" alt="Blackjack" width="80">
+                </div>
+                <h5 class="card-title">Blackjack</h5>
+                <p class="card-text">Try to beat the dealer without going over 21. Win up to 2x your bet!</p>
+                <a href="{{ url_for('games.blackjack') }}" class="btn btn-danger">Play Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card game-card bg-dark border border-info h-100">
+            <div class="card-body text-center">
+                <div class="game-icon">
+                    <img src="{{ url_for('static', filename='svg/slots.svg') }}" alt="Slots" width="80">
+                </div>
+                <h5 class="card-title">Slots</h5>
+                <p class="card-text">Spin to win! Match symbols and win up to 20x your bet!</p>
+                <a href="{{ url_for('games.slots') }}" class="btn btn-info">Play Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <h2 class="text-center text-white">Top Players</h2>
+        <hr class="border-secondary">
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <i class="fas fa-coins text-warning me-2"></i> Richest Players
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for user in top_cash %}
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
+                        <span>
+                            <span class="badge bg-secondary me-2">#{{ loop.index }}</span>
+                            {{ user.username }}
+                        </span>
+                        <span class="badge bg-warning text-dark currency-value">{{ user.cash }}</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item bg-dark text-light">No players found</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ url_for('main.leaderboard') }}" class="btn btn-sm btn-outline-light">View Full Leaderboard</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <i class="fas fa-star text-warning me-2"></i> Highest Level Players
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for user in top_level %}
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
+                        <span>
+                            <span class="badge bg-secondary me-2">#{{ loop.index }}</span>
+                            {{ user.username }}
+                        </span>
+                        <span class="badge bg-info">Level {{ user.level }}</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item bg-dark text-light">No players found</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ url_for('main.leaderboard') }}" class="btn btn-sm btn-outline-light">View Full Leaderboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <h2 class="text-center text-white">Recent Activity</h2>
+        <hr class="border-secondary">
+    </div>
+    <div class="col-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Player</th>
+                                <th>Game</th>
+                                <th>Bet</th>
+                                <th>Outcome</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for game in recent_games %}
+                            <tr>
+                                <td>{{ game.player.username }}</td>
+                                <td>{{ game.game_type|capitalize }}</td>
+                                <td>{{ game.bet_amount }}</td>
+                                <td>
+                                    {% if game.outcome == 'win' %}
+                                    <span class="badge bg-success">+{{ game.winnings }}</span>
+                                    {% elif game.outcome == 'loss' %}
+                                    <span class="badge bg-danger">-{{ game.bet_amount }}</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">{{ game.outcome }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ game.played_at.strftime('%H:%M:%S') }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">No recent games</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-6 offset-md-3">
+        <div class="card bg-dark border border-secondary text-center">
+            <div class="card-body">
+                <h3 class="card-title text-white">How to Play</h3>
+                <p class="card-text">Getting started with Gambling Game Bot is easy:</p>
+                <ol class="text-start">
+                    <li>Create an account to get 1,000 starter coins</li>
+                    <li>Choose from a variety of games to play</li>
+                    <li>Collect daily rewards and work for more coins</li>
+                    <li>Compete with others to climb the leaderboards</li>
+                </ol>
+                <a href="{{ url_for('main.help') }}" class="btn btn-outline-light">Read the Full Guide</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block title %}Help & Game Guide - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-question-circle text-info me-2"></i>Help & Game Guide</h4>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="helpAccordion">
+                    <!-- Getting Started Section -->
+                    <div class="accordion-item bg-dark text-white border-secondary">
+                        <h2 class="accordion-header" id="headingGettingStarted">
+                            <button class="accordion-button bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGettingStarted" aria-expanded="true" aria-controls="collapseGettingStarted">
+                                <i class="fas fa-play-circle me-2 text-info"></i> Getting Started
+                            </button>
+                        </h2>
+                        <div id="collapseGettingStarted" class="accordion-collapse collapse show" aria-labelledby="headingGettingStarted" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body">
+                                <p>Welcome to the Gambling Game Bot! Here's how to get started:</p>
+                                
+                                <ol>
+                                    <li class="mb-2">
+                                        <strong>Create an account</strong> - Register to receive 1,000 starting coins and begin your gambling journey.
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Check your profile</strong> - View your current stats, balance, and game history.
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Collect daily rewards</strong> - Don't forget to claim your daily bonus by clicking the "Claim Daily" button on your profile.
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Work for more coins</strong> - Every 10 minutes, you can work to earn additional coins.
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Play games</strong> - Choose from our selection of gambling games to win big!
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Level up</strong> - Winning games gives you XP, which increases your level and daily rewards.
+                                    </li>
+                                </ol>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i> The higher your level, the more coins you'll receive from daily rewards and work!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Game Rules Section -->
+                    <div class="accordion-item bg-dark text-white border-secondary">
+                        <h2 class="accordion-header" id="headingGameRules">
+                            <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGameRules" aria-expanded="false" aria-controls="collapseGameRules">
+                                <i class="fas fa-dice me-2 text-warning"></i> Game Rules
+                            </button>
+                        </h2>
+                        <div id="collapseGameRules" class="accordion-collapse collapse" aria-labelledby="headingGameRules" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body">
+                                <h5 class="text-warning mb-3">Coin Flip</h5>
+                                <ul class="mb-4">
+                                    <li>Choose either heads or tails</li>
+                                    <li>Place your bet</li>
+                                    <li>If your prediction is correct, you win 2x your bet</li>
+                                    <li>If wrong, you lose your bet</li>
+                                    <li>50/50 odds of winning</li>
+                                </ul>
+                                
+                                <h5 class="text-danger mb-3">Blackjack</h5>
+                                <ul class="mb-4">
+                                    <li>The goal is to get cards totaling closer to 21 than the dealer without going over</li>
+                                    <li>Number cards (2-10) are worth their face value</li>
+                                    <li>Face cards (J, Q, K) are worth 10</li>
+                                    <li>Aces are worth 11 or 1, whichever is better for your hand</li>
+                                    <li>If you win, you get 2x your bet</li>
+                                    <li>If you tie (push), your bet is returned</li>
+                                    <li>If you lose, you lose your bet</li>
+                                </ul>
+                                
+                                <h5 class="text-info mb-3">Slots</h5>
+                                <ul class="mb-4">
+                                    <li>Place your bet and spin the slots</li>
+                                    <li>Three matching symbols wins big - payouts range from 5x to 20x your bet</li>
+                                    <li>Two matching symbols win 1x your bet</li>
+                                    <li>Different symbols have different payout values</li>
+                                    <li>No matches means you lose your bet</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Currency & Leveling Section -->
+                    <div class="accordion-item bg-dark text-white border-secondary">
+                        <h2 class="accordion-header" id="headingCurrency">
+                            <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCurrency" aria-expanded="false" aria-controls="collapseCurrency">
+                                <i class="fas fa-coins me-2 text-warning"></i> Currency & Leveling
+                            </button>
+                        </h2>
+                        <div id="collapseCurrency" class="accordion-collapse collapse" aria-labelledby="headingCurrency" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body">
+                                <h5 class="text-white mb-3">Earning Coins</h5>
+                                <ul class="mb-4">
+                                    <li><strong>Starting Balance:</strong> 1,000 coins for new players</li>
+                                    <li><strong>Daily Reward:</strong> 1,000 + (level × 100) coins every 24 hours</li>
+                                    <li><strong>Work:</strong> 500 + (level × 50) coins every 10 minutes</li>
+                                    <li><strong>Winning Games:</strong> Different payouts depending on the game and bet amount</li>
+                                </ul>
+                                
+                                <h5 class="text-white mb-3">Experience (XP) System</h5>
+                                <ul class="mb-4">
+                                    <li>Win games to earn XP (typically 100 XP per win)</li>
+                                    <li>XP needed for next level = (current level + 1) × 1,000</li>
+                                    <li>Higher levels increase your daily and work rewards</li>
+                                    <li>There's no level cap, so you can keep progressing indefinitely</li>
+                                </ul>
+                                
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-lightbulb me-2"></i> <strong>Pro Tip:</strong> Balance risk and reward! While high bets can win big, they can also lead to big losses. Consider your betting strategy carefully.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Leaderboards Section -->
+                    <div class="accordion-item bg-dark text-white border-secondary">
+                        <h2 class="accordion-header" id="headingLeaderboards">
+                            <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLeaderboards" aria-expanded="false" aria-controls="collapseLeaderboards">
+                                <i class="fas fa-trophy me-2 text-warning"></i> Leaderboards
+                            </button>
+                        </h2>
+                        <div id="collapseLeaderboards" class="accordion-collapse collapse" aria-labelledby="headingLeaderboards" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body">
+                                <p>Compete with other players to climb various leaderboards:</p>
+                                
+                                <h5 class="text-white mb-3">Leaderboard Categories</h5>
+                                <ul class="mb-4">
+                                    <li><strong>Wealthiest Players:</strong> Top players with the highest coin balance</li>
+                                    <li><strong>Highest Level:</strong> Players who have gained the most experience</li>
+                                    <li><strong>Game Profits:</strong> Most profitable games across all players</li>
+                                </ul>
+                                
+                                <p>Leaderboards update in real-time as players win or lose games. Claim your spot at the top!</p>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i> Leaderboards are global, so you're competing against all players using the platform.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ Section -->
+                    <div class="accordion-item bg-dark text-white border-secondary">
+                        <h2 class="accordion-header" id="headingFAQ">
+                            <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQ" aria-expanded="false" aria-controls="collapseFAQ">
+                                <i class="fas fa-comments me-2 text-info"></i> Frequently Asked Questions
+                            </button>
+                        </h2>
+                        <div id="collapseFAQ" class="accordion-collapse collapse" aria-labelledby="headingFAQ" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body">
+                                <div class="mb-4">
+                                    <h6 class="text-warning">Q: What happens if I run out of coins?</h6>
+                                    <p>A: You can still claim your daily reward and work every 10 minutes to rebuild your balance. Don't worry, you'll be back in the game soon!</p>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h6 class="text-warning">Q: How is the house edge calculated?</h6>
+                                    <p>A: Each game has different odds:</p>
+                                    <ul>
+                                        <li>Coin Flip: 50/50 odds with no house edge</li>
+                                        <li>Blackjack: Slight house edge due to dealer rules</li>
+                                        <li>Slots: Higher house edge balanced by larger potential payouts</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h6 class="text-warning">Q: Can I transfer coins to another player?</h6>
+                                    <p>A: Currently, player-to-player transfers are not supported.</p>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h6 class="text-warning">Q: How do I level up faster?</h6>
+                                    <p>A: Win games consistently! Each win gives you XP, regardless of bet size. Playing frequently is the key to leveling up quickly.</p>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h6 class="text-warning">Q: Are more games coming soon?</h6>
+                                    <p>A: Yes! We're constantly working on adding new games and features to enhance your gambling experience.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card bg-dark border border-info text-center">
+            <div class="card-body">
+                <h5 class="text-white mb-3">Still Have Questions?</h5>
+                <p class="text-muted mb-4">Check out our about page for more information or contact us directly.</p>
+                <a href="{{ url_for('main.about') }}" class="btn btn-outline-info">
+                    <i class="fas fa-info-circle me-2"></i> About Gambling Game Bot
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

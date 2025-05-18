@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block title %}Leaderboards - Gambling Game Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-trophy text-warning me-2"></i>Leaderboards</h4>
+            </div>
+            <div class="card-body p-0">
+                <ul class="nav nav-tabs" id="leaderboardTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="wealth-tab" data-bs-toggle="tab" data-bs-target="#wealth" type="button" role="tab" aria-controls="wealth" aria-selected="true">
+                            <i class="fas fa-coins text-warning me-1"></i> Wealthiest Players
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="level-tab" data-bs-toggle="tab" data-bs-target="#level" type="button" role="tab" aria-controls="level" aria-selected="false">
+                            <i class="fas fa-star text-info me-1"></i> Highest Level
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="games-tab" data-bs-toggle="tab" data-bs-target="#games" type="button" role="tab" aria-controls="games" aria-selected="false">
+                            <i class="fas fa-gamepad text-danger me-1"></i> Game Profits
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content p-3" id="leaderboardTabContent">
+                    <div class="tab-pane fade show active" id="wealth" role="tabpanel" aria-labelledby="wealth-tab">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Player</th>
+                                        <th>Cash</th>
+                                        <th>Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in richest_users %}
+                                    <tr class="leaderboard-item {% if current_user.is_authenticated and user.id == current_user.id %}table-primary{% endif %}">
+                                        <td>
+                                            <span class="leaderboard-rank">
+                                                {% if loop.index == 1 %}
+                                                <i class="fas fa-crown text-warning"></i>
+                                                {% else %}
+                                                {{ loop.index }}
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td>{{ user.username }}</td>
+                                        <td class="currency-value">{{ user.cash }}</td>
+                                        <td>{{ user.level }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">No data available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="level" role="tabpanel" aria-labelledby="level-tab">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Player</th>
+                                        <th>Level</th>
+                                        <th>XP Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in highest_level %}
+                                    <tr class="leaderboard-item {% if current_user.is_authenticated and user.id == current_user.id %}table-primary{% endif %}">
+                                        <td>
+                                            <span class="leaderboard-rank">
+                                                {% if loop.index == 1 %}
+                                                <i class="fas fa-crown text-warning"></i>
+                                                {% else %}
+                                                {{ loop.index }}
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td>{{ user.username }}</td>
+                                        <td>{{ user.level }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 15px;">
+                                                {% set xp_percent = (user.xp / ((user.level + 1) * 1000)) * 100 %}
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ xp_percent }}%;" 
+                                                     aria-valuenow="{{ user.xp }}" aria-valuemin="0" aria-valuemax="{{ (user.level + 1) * 1000 }}">
+                                                    {{ user.xp }} / {{ (user.level + 1) * 1000 }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">No data available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="games" role="tabpanel" aria-labelledby="games-tab">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Game</th>
+                                        <th>Total Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for game in game_profits %}
+                                    <tr class="leaderboard-item">
+                                        <td>
+                                            <span class="leaderboard-rank">{{ loop.index }}</span>
+                                        </td>
+                                        <td>{{ game.game_type|capitalize }}</td>
+                                        <td class="currency-value">{{ game.total_profit }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">No data available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark border border-secondary">
+            <div class="card-body text-center py-4">
+                <h5 class="card-title text-white mb-3">Want to Climb the Leaderboards?</h5>
+                <p class="card-text mb-4">Play games, earn coins, and level up to reach the top!</p>
+                <div class="d-grid gap-2 col-md-6 mx-auto">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('games.coinflip') }}" class="btn btn-warning">
+                        <i class="fas fa-gamepad me-2"></i>Play Games Now
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-warning">
+                        <i class="fas fa-user-plus me-2"></i>Register to Play
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark border border-secondary h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>How Rankings Work</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-dark text-light">Rankings are updated in real-time as players win and lose games</li>
+                    <li class="list-group-item bg-dark text-light">Cash leaderboard shows players with the most coins</li>
+                    <li class="list-group-item bg-dark text-light">Level leaderboard shows players with the highest levels</li>
+                    <li class="list-group-item bg-dark text-light">Game profits show which games have been most profitable overall</li>
+                    <li class="list-group-item bg-dark text-light">Win daily rewards and play games to climb the ranks!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark border border-secondary h-100">
+            <div class="card-body text-center">
+                <img src="https://pixabay.com/get/g4eed74d239998ccfffec2b6341a14d58a3cec92c709cf17713171747cb6816d82daae6cf6a8d726527e4f4fa253c4f95644b35de73000bfe2a3526bc151808ad_1280.jpg" alt="Digital Currency" class="img-fluid rounded mb-3" style="max-height: 200px;">
+                <h5 class="text-white">Compete for Virtual Riches!</h5>
+                <p class="text-muted">Test your luck, improve your strategy, and become the wealthiest player.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Format all currency values
+        document.querySelectorAll('.currency-value').forEach(el => {
+            const value = parseInt(el.textContent);
+            el.textContent = new Intl.NumberFormat().format(value);
+        });
+    });
+</script>
+{% endblock %}

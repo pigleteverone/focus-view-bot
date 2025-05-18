@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Card 1 (front) -->
+  <rect x="10" y="20" width="40" height="60" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1" />
+  <text x="15" y="35" font-family="Arial" font-size="12" fill="#d63031">A</text>
+  <text x="45" y="75" font-family="Arial" font-size="12" fill="#d63031">A</text>
+  <text x="30" y="55" font-family="Arial" font-size="24" fill="#d63031">♥</text>
+  
+  <!-- Card 2 (middle, back) -->
+  <rect x="30" y="15" width="40" height="60" rx="5" ry="5" fill="#0984e3" stroke="#000" stroke-width="1" />
+  <rect x="35" y="20" width="30" height="50" rx="3" ry="3" fill="#74b9ff" stroke="#0984e3" stroke-width="1" />
+  
+  <!-- Card 3 (front) -->
+  <rect x="50" y="10" width="40" height="60" rx="5" ry="5" fill="#fff" stroke="#000" stroke-width="1" />
+  <text x="55" y="25" font-family="Arial" font-size="12" fill="#000">K</text>
+  <text x="85" y="65" font-family="Arial" font-size="12" fill="#000">K</text>
+  <text x="70" y="45" font-family="Arial" font-size="24" fill="#000">♠</text>
+</svg>
